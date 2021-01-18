@@ -1,47 +1,64 @@
-import axios from "axios";
+import React from "react";
+import "./styles.css";
 import { useEffect, useState } from "react";
-
-import { BrowserRouter as Router, Route,Link, Switch } from 'react-router-dom';
-
-function App() {
+import axios from "axios";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+export default function App() {
   const [countries, setCountries] = useState([]);
   useEffect(() => {
-    axios.get('https://restcountries.eu/rest/v2/all')
-      .then(response => setCountries(response.data))
-  }, [])
+    /*fetch('https://restcountries.eu/rest/v2/all')
+    .then(response=>response.json())
+    .then(response=>setCountries(response))*/
+    axios
+      .get("https://restcountries.eu/rest/v2/all")
+      .then((response) => setCountries(response.data))
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
     <Router>
       <div className="App">
-        Anasayfa
+        <Link to="/">Anasayfa</Link>
+        <h1>REACT</h1>
+        <h2>Fetch - Axios</h2>
         <Switch>
-        <Route path="/" render={ (props) => (<Countries {...props} countries={countries} ></Countries>) }>
-        </Route>
+          <Route
+            exact
+            path="/"
+            render={() =>
+              countries.map((country) => (
+                <div key={country.name}>
+                  <hr />
+                  <Link to={`/country/${country.alpha3Code}`}>
+                    <h3>{country.name}</h3>
+                  </Link>
+                </div>
+              ))
+            }
+          />
+
+          <Route
+            path="/country/:code"
+            render={(renderProps) => {
+              const country = countries.find(
+                (country) =>
+                  country.alpha3Code === renderProps.match.params.code
+              );
+              return <Country {...renderProps} country={country} />;
+            }}
+          />
         </Switch>
       </div>
     </Router>
   );
 }
 
-export default App;
-
-function Countries(props){
+const Country = (props) => {
+  let { name, capital } = props.country;
   return (
     <div>
-      {
-        props.countries.map(c => {
-          return (
-            <div key={c.name} style={{ textAlign: "center", background: "#f2f2f2", padding: "5px", margin: "15px", boxSizing: "borderBox" }}>
-              <Link to="/detay">
-                <h3>{c.name}</h3>
-              </Link>
-              <h4>{c.capital}</h4>
-              <p>
-                <img src={c.flag} style={{ width: "100px" }} />
-              </p>
-            </div>
-          )
-        })
-      }
+      <h3>{name}</h3>
+      <h5>{capital}</h5>
     </div>
-  )
-}
+  );
+};
