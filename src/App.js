@@ -54,11 +54,12 @@ export default function App() {
 }
 
 const Country = (props) => {
-  let { name, capital } = props.country;
+  let { name, capital, flag } = props.country;
   return (
     <div>
       <h3>{name}</h3>
       <h5>{capital}</h5>
+      <img style={{ width: "400px" }} alt={name} src={flag} />
     </div>
   );
 };
